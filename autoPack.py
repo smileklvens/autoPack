@@ -60,9 +60,6 @@ parentPath = path = os.path.dirname(os.path.realpath(__file__)) + getBackslash()
 #config
 libPath = parentPath + "lib" + getBackslash()
 buildToolsPath =  config.sdkBuildToolPath + getBackslash()
-# checkAndroidV2SignaturePath = libPath + "CheckAndroidV2Signature.jar"
-# walleChannelWritterPath = libPath + "walle-cli-all.jar"
-
 keystorePath = config.keystorePath
 keyAlias = config.keyAlias
 keystorePassword = config.keystorePassword
@@ -70,17 +67,6 @@ keyPassword = config.keyPassword
 channelsOutputFilePath = parentPath + "channels"
 channelFilePath = parentPath +"channel"
 protectedSourceApkPath = parentPath + config.protectedSourceApkName
-
-
-# 检查自定义路径，并作替换
-# if len(config.protectedSourceApkDirPath) > 0:
-#   protectedSourceApkPath = config.protectedSourceApkDirPath + getBackslash() + config.protectedSourceApkName
-
-# if len(config.channelsOutputFilePath) > 0:
-#   channelsOutputFilePath = config.channelsOutputFilePath
-
-# if len(config.channelFilePath) > 0:
-#   channelFilePath = config.channelFilePath
 
 
 zipalignedApkPath = protectedSourceApkPath[0 : -4] + "_aligned.apk"
@@ -92,8 +78,7 @@ createChannelsDir()
 cleanChannelsFiles()
 #清空临时文件
 cleanTempResource()
-
-# 重点 
+# 以下重点 
 os.chdir(buildToolsPath)
 #对齐
 zipResult = os.system("zipalign 4 " + protectedSourceApkPath + " " + zipalignedApkPath)
@@ -114,7 +99,7 @@ else:
 
 os.chdir(libPath)
 #检查V2签名是否正确
-checkResult = os.system("java -jar CheckAndroidV2Signature.jar"  + signedApkPath)
+checkResult = os.system("java -jar CheckAndroidSignature.jar "  + signedApkPath)
 if checkResult == 0:
     print("check sign success")
 else:
@@ -125,12 +110,11 @@ writeChannelShell = "java -jar walle-cli-all.jar batch -f " + channelFilePath + 
 print(writeChannelShell)
 channelResult = os.system(writeChannelShell)
 if channelResult == 0:
-    print("build channel success")
+    print("build channel success，Please check channels dir")
 else:
     print("build channel failed")
     exit(1)
 
-print("success Please check channels in the path")
 
 
 
