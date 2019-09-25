@@ -110,7 +110,9 @@ writeChannelShell = "java -jar walle-cli-all.jar batch -f " + channelFilePath + 
 print(writeChannelShell)
 channelResult = os.system(writeChannelShell)
 if channelResult == 0:
-    print("build channel success，Please check channels dir")
+  #清空临时文件
+    cleanTempResource()
+    print("build channel success,please check channels dir")
 else:
     print("build channel failed")
     exit(1)
