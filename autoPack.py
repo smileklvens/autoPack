@@ -5,13 +5,10 @@
 #  *  update by zlk
 #  * ================================================
 #  */
-
 import os
 import sys
 import config
 import platform
-
-
 
 #判断当前系统
 def isWindows():
@@ -28,6 +25,8 @@ def getBackslash():
 	else:
 		return "/"
 
+# 兼容不同系统。在 /Android/sdk/build-tools/28.0.3 目录中，执行zipalign，linux下需要加  ./
+prefix = "" if(isWindows() == 1) else  "./"
 
 # 清空临时资源
 def cleanTempResource():
@@ -81,14 +80,15 @@ cleanTempResource()
 # 以下重点 
 os.chdir(buildToolsPath)
 #对齐
-zipResult = os.system("zipalign 4 " + protectedSourceApkPath + " " + zipalignedApkPath)
+	
+zipResult = os.system(prefix+"zipalign 4 " + protectedSourceApkPath + " " + zipalignedApkPath) 
 if zipResult == 0:
     print("zipalign success")
 else:
     print("zipalign failed")
     exit(1)
 #签名
-signShell = "apksigner sign --ks "+ keystorePath + " --ks-key-alias " + keyAlias + " --ks-pass pass:" + keystorePassword + " --key-pass pass:" + keyPassword + " --out " + signedApkPath + " " + zipalignedApkPath
+signShell = prefix +"apksigner sign --ks "+ keystorePath + " --ks-key-alias " + keyAlias + " --ks-pass pass:" + keystorePassword + " --key-pass pass:" + keyPassword + " --out " + signedApkPath + " " + zipalignedApkPath
 print(signShell)
 signResult = os.system(signShell)
 if signResult == 0:
